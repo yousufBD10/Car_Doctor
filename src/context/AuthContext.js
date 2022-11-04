@@ -21,6 +21,7 @@ const login = (email,password)=>{
 }
 
 const logOut = () =>{
+    localStorage.removeItem("Car_Doctor_token");
     return signOut(auth);
 }
 

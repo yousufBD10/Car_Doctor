@@ -3,17 +3,31 @@ import { AuthContext } from '../../context/AuthContext';
 import OrdersRow from './OrdersRow';
 
 const Orders = () => {
-const {user} = useContext(AuthContext);
+const {user,logOut} = useContext(AuthContext);
 
 const [order,setOrder] = useState([])
 
 
    
     useEffect(()=>{
-    fetch(`http://localhost:5000/orders?email=${user?.email}`)
-    .then(res => res.json())
-    .then(data=>setOrder(data))
-    },[user?.email])
+    fetch(`http://localhost:5000/orders?email=${user?.email}`,{
+      headers: {
+        authorizaton: `Bearer ${localStorage.getItem("Car_Doctor_token")}`
+      }
+    })
+    .then(res =>{
+      if(res.status === 401 || res.status === 403){
+        return logOut();
+      }
+      return res.json();
+    
+      
+    
+  })
+    .then(data=>{
+      setOrder(data)
+    })
+    },[user?.email,logOut])
 
     const handleDelete = id =>{
       const proceed = window.confirm("are sure delete this item");
